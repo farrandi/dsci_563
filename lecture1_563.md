@@ -42,6 +42,11 @@
 
 - One of the most popular clustering algorithms
 - Simple and easy to implement
+- **Basic Algorithm**:
+  1. Randomly initialize $K$ centroids
+  2. Assign each data point to the nearest centroid
+  3. Update the centroids to the mean of the data points assigned to it
+  4. Repeat steps 2 and 3 until convergence
 - **Properties**:
   - Will always converge (not necessarily to the right answer)
   - Sensitive to intialization
@@ -62,10 +67,9 @@ kmeans = KMeans(n_clusters=3, n_init='auto')
 kmeans.fit(X); # only need X
 
 kmeans.labels_ # cluster assignments
+kmeans.cluster_centers_ # cluster centroids
 kmeans.predict(new_data) # predict cluster for new data
 ```
-
-#### K-Means Algorithm
 
 #### Choosing K
 
@@ -98,9 +102,7 @@ kmeans.predict(new_data) # predict cluster for new data
   - K-means assumes spherical clusters
   - GMMs can have more flexible cluster shapes
 
-<img src="images/1_kmeans_bad.png" width="250">
-
-<img src="images/1_gmm.png" width="550">
+<img src="images/1_gmm_type.png" width="550">
 
 ```python
 from sklearn.mixture import GaussianMixture
@@ -118,13 +120,14 @@ gmm.weights_ # cluster weights (size: K)
 
 - `covariance_type`:
   - `full`: Each component has its own general covariance matrix
-    - size: K x n_features x n_features
+    - size: $K \times n\_features \times n\_features$
   - `tied`: All components share the same general covariance matrix
-    - size: n_features x n_features
+    - size: $n\_features \times n\_features$
   - `diag`: Each component has its own diagonal covariance matrix
-    - size: K x n_features
+    - size: $K \times n\_features$
   - `spherical`: Each component has its own single variance
-    - size: K
+    - size: $K$
+    - Similar to K-means
 
 ### How GMMs Work
 
@@ -137,6 +140,20 @@ $$P(x) = \sum_{k=1}^{K} \pi_k \mathcal{N}(x | \mu_k, \Sigma_k)$$
 
   <br/>
 
+- **Generative Model**: models the probability of a data point being generated from the mixture of Gaussians
 - The generative story of the model assumes that each data point in the dataset is generated from one of the Gaussian components
   - Choose $k$ with probability $\pi_k$
   - Generate data point from $\mathcal{N}(x | \mu_k, \Sigma_k)$
+- **High Level Algorithm**:
+  1. Initialize $\pi_k, \mu_k, \Sigma_k$
+  2. E-step: Compute the probability of each data point belonging to each cluster
+  3. M-step: Update $\pi_k, \mu_k, \Sigma_k$ to maximize the likelihood of the data
+  4. Repeat steps 2 and 3 until convergence
+- Under the hood, GMMs use the Expectation-Maximization (EM) algorithm.
+  - Basic idea: treat cluster assignments as hidden variables and iteratively update them
+
+### GMM Properties
+
+- Sensitivity to initialization
+- Non-convex optimization problem
+  - Can have multiple local optima
