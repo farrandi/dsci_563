@@ -25,6 +25,18 @@
     - cuisines
     - healthy vs unhealthy
 
+---
+
+**Comparisons with kNN**:
+| k-Means | k-Nearest Neighbors |
+| ------- | -------------------- |
+| Unsupervised | Supervised |
+| Clustering | Classification |
+| Parametric | Non-parametric |
+| k = number of clusters | k = number of neighbors |
+
+---
+
 #### Common Applications
 
 1. Data Exploration
@@ -51,6 +63,9 @@
   - Will always converge (not necessarily to the right answer)
   - Sensitive to intialization
   - Terminates when centroids do not change
+  - **MUST SCALE DATA** before applying K-means
+    - Because K-means uses distance
+    - If features are on different scales, the clustering will be biased towards the features with larger scales
 
 ---
 
