@@ -102,6 +102,16 @@ kmeans.predict(new_data) # predict cluster for new data
      - Elbow point: point where inertia starts to decrease more slowly
    - Choose K at elbow point
 
+   ```python
+   from yellowbrick.cluster import KElbowVisualizer
+
+    model = KMeans(n_init='auto')
+    visualizer = KElbowVisualizer(model, k=(1, 10))
+
+    visualizer.fit(XX)  # Fit the data to the visualizer
+    visualizer.show();
+   ```
+
 2. **Silhouette Score**:
    $$\text{Silhouette Score} = \frac{b - a}{\max(a, b)}$$
 
@@ -111,6 +121,15 @@ kmeans.predict(new_data) # predict cluster for new data
      - 1: Object is well matched to its own cluster and poorly matched to neighboring clusters
      - 0: Object is not matched to its own cluster and might be better in neighboring clusters
      - -1: Object is poorly matched to its own cluster and well matched to neighboring clusters
+
+   ```python
+   from yellowbrick.cluster import SilhouetteVisualizer
+
+   model = KMeans(2, n_init='auto', random_state=42)
+   visualizer = SilhouetteVisualizer(model, colors="yellowbrick")
+   visualizer.fit(XX)  # Fit the data to the visualizer
+   visualizer.show();
+   ```
 
 ## Gaussian Mixture Models (High-Level Overview)
 
