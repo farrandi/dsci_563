@@ -63,6 +63,7 @@
   - Will always converge (not necessarily to the right answer)
   - Sensitive to intialization
   - Terminates when centroids do not change
+  - Makes _linear_ decision boundaries
   - **MUST SCALE DATA** before applying K-means
     - Because K-means uses distance
     - If features are on different scales, the clustering will be biased towards the features with larger scales
@@ -142,7 +143,6 @@ gmm.weights_ # cluster weights (size: K)
     - size: $K \times n\_features$
   - `spherical`: Each component has its own single variance
     - size: $K$
-    - Similar to K-means
 
 ### How GMMs Work
 
