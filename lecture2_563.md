@@ -8,6 +8,18 @@
   - No need to specify number of clusters
   - Can find clusters of arbitrary shapes
   - Can identify points that don't belong to any cluster
+  - Initialization is not a problem
+- Comparison to K-means:
+  - does not have to assign all points to clusters
+  - no `predict` method unlike K-means
+
+| Pros                                  | Cons                                          |
+| ------------------------------------- | --------------------------------------------- |
+| Can find clusters of arbitrary shapes | cannot predict new data                       |
+| Can detect outliers                   | Needs tuning of 2 non-trivial hyperparameters |
+
+- **DBSCAN Failure Cases**:
+  - Different densities of clusters
 
 ```python
 from sklearn.cluster import DBSCAN
@@ -37,9 +49,32 @@ dbscan.labels_
   - Check if neighbors are core points and repeat
   - Once no more core points, pick another random point and repeat
 
+### Evaluating DBSCAN Clusters
+
+1. Silhouette Method
+   - Cannot use elbow method because no centroids
+
+```python
+from yellowbrick.cluster import SilhouetteVisualizer
+
+model = DBSCAN(eps=0.5, min_samples=5)
+model.fit(X)
+
+# Silhoutte is designed for k-means, so we need to do this
+n_clusters = len(set(model.labels_))
+dbscan.n_clusters = n_clusters
+dbscan.predict = lambda x: model.labels_
+
+visualizer = SilhouetteVisualizer(dbscan, colors='yellowbrick')
+visualizer.fit(X)
+visualizer.show()
+```
+
 ## Hierarchical Clustering
 
-- Main idea:
+- Hard to decide how many clusters
+  - So get complete picture of similarity between points then decide
+- **Main idea**:
   - Start with each point as a cluster
   - Merge the closest clusters
   - Repeat until only a single cluster remains (n-1 steps)
@@ -52,12 +87,20 @@ from scipy.cluster.hierarchy import dendrogram, ward
 
 X_scaled = StandardScaler().fit_transform(X)
 
-linkage_array = ward(X_scaled)
+linkage_array = ward(X_scaled) # see below for linkage criteria
 
 # Plot the dendrogram
 ax = plt.subplot()
 dendrogram(linkage_array, ax=ax, color_threshold=3)
 ```
+
+### Dendrogram
+
+- x-axis: data points
+- y-axis: distance between clusters
+- Is a tree like plot
+  - New parent node for each 2 clusters that are merged
+- Length of the vertical line at the point of merging is the distance between the clusters
 
 ### Flat Clusters
 
@@ -66,5 +109,28 @@ dendrogram(linkage_array, ax=ax, color_threshold=3)
 ```python
 from scipy.cluster.hierarchy import fcluster
 
-hier_labels = fcluster(linkage_array, 8, criterion='maxclust')
+# 3 is the max distance
+hier_labels = fcluster(linkage_array, 3 , criterion='distance')
+
+# Based on max number of clusters (4 max clusters)
+hier_labels = fcluster(linkage_array, 4 , criterion='maxclust')
 ```
+
+### Linkage Criteria
+
+- Linkage Criteria determines how to find similarity between clusters
+- **Single Linkage**:
+  - Smallest minimal distance between points in two clusters
+  - Can lead to chaining
+  - `scipy.cluster.hierarchy.single`
+- **Complete Linkage**:
+  - Smallest maximal distance between points in two clusters
+  - Can lead to crowding (tight clusters)
+  - `scipy.cluster.hierarchy.complete`
+- **Average Linkage**:
+  - Average distance between points in two clusters
+  - `scipy.cluster.hierarchy.average`
+- **Ward's Method**:
+  - Minimizes the variance of the clusters being merged
+  - Leads to equally sized clusters
+  - `scipy.cluster.hierarchy.ward`
