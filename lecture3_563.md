@@ -31,6 +31,8 @@ Usually $k << d$
 - $X$: original data, ($n \times d$)
 - $Z$: lower dimension hyperplane, ($n \times k$)
 - $W$: coordinates in the lower dimension, ($k \times d$)
+  - $W$ is the principal components
+  - Rows of $W$ are orthogonal to each other
 
 Can **reconstruct** the original data with some error:
 
@@ -40,7 +42,7 @@ _Note_: if $k = d$, then $Z$ is not necessarily $X$ but $\hat{X} = X$ (Frobenius
 
 - **Objective Function**:
   - Minimize $\|ZW - X\|_F^2$
-    - Frobeinus norm
+    - Frobeinus norm $||A||_F = \sqrt{\sum_{i=1}^m \sum_{j=1}^n a_{ij}^2}$
   - NOT the same as least squares
     - LS is vertical distance, PCA is orthogonal distance
 
@@ -51,11 +53,12 @@ _Note_: if $k = d$, then $Z$ is not necessarily $X$ but $\hat{X} = X$ (Frobenius
   $$A = USV^T$$
 
   - $A$: original data, ($n \times d$)
-  - $U$: left singular vectors, ($n \times n$)
-  - $S$: diagonal matrix of singular values, ($n \times d$)
+  - $U$: **left singular vectors**, ($n \times n$)
+    - orthonormal columns $U_i^TU_j = 0$ for all $i \neq j$
+  - $S$: **diagonal matrix** of singular values, ($n \times d$)
     - square root of **eigenvalues** of $A^TA$ or $AA^T$
     - corresponds to the variance of the data along the principal components (in decreasing order)
-  - $V$: right singular vectors, ($d \times d$)
+  - $V$: **right singular vectors**, ($d \times d$)
     - orthonormal columns (**eigenvectors**)
     - principal components (get the first $k$ columns)
 
@@ -80,10 +83,15 @@ _Note_: if $k = d$, then $Z$ is not necessarily $X$ but $\hat{X} = X$ (Frobenius
 
 ### PCA Applications
 
-1. Data Compression
-2. Feature Extraction
-3. Visualization of High-Dimensional Data
-4. Dimensionality Reduction
+1. **Data Compression**
+   - Can use the first $k$ principal components to represent the data
+2. **Feature Extraction**
+   - Can use the first $k$ principal components as features
+3. **Visualization of High-Dimensional Data**
+   - Can visualize the data in 2D or 3D by using the first 2 or 3 principal components
+4. **Dimensionality Reduction**
+5. **Anomaly Detection**
+   - Can use the reconstruction error to detect anomalies (if the error is too large)
 
 ### PCA in Python
 
