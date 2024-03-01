@@ -62,7 +62,7 @@ _Note_: if $k = d$, then $Z$ is not necessarily $X$ but $\hat{X} = X$ (Frobenius
     - orthonormal columns (**eigenvectors**)
     - principal components (get the first $k$ columns)
 
-- For dimensionality reduction, we can use the first $k$ columns of $U$ and the first $k$ rows of $V^T$.
+- For dimensionality reduction, we can use the first $k$ columns of $U$ and the first $k$ rows of $V^T$ (equal to first $k$ columns of $V$)
 
 - **PCA Algorithm**
 
@@ -81,6 +81,27 @@ _Note_: if $k = d$, then $Z$ is not necessarily $X$ but $\hat{X} = X$ (Frobenius
     - Sequential PCA: $w_1^Tw_2 = 0$, $w_2^Tw_3 = 0$, etc.
   - The principal components are unique up to sign
 
+### Choosing Number of Components
+
+- No definitive rule
+- Can look at:
+  - Explained variance ratio
+  - Reconstructions plot
+
+```python
+from sklearn.decomposition import PCA
+pca = PCA()
+pca.fit(samples)
+
+# Plot the explained variances
+plt.plot(np.cumsum(pca.explained_variance_ratio_))
+```
+
+### PCA and Multicollinearity
+
+- PCA can be used to remove multicollinearity
+- **Concept**: the principal components are orthogonal to each other so they should not be correlated
+
 ### PCA Applications
 
 1. **Data Compression**
@@ -91,7 +112,8 @@ _Note_: if $k = d$, then $Z$ is not necessarily $X$ but $\hat{X} = X$ (Frobenius
    - Can visualize the data in 2D or 3D by using the first 2 or 3 principal components
 4. **Dimensionality Reduction**
 5. **Anomaly Detection**
-   - Can use the reconstruction error to detect anomalies (if the error is too large)
+   - Can use the reconstruction error to detect anomalies/ outliers (if the error is too large)
+   - Outliers = high reconstruction error
 
 ### PCA in Python
 
@@ -110,3 +132,8 @@ X_hat = pipeline.inverse_transform(Z)
 # Get the principal components
 print(pca.components_)
 ```
+
+### K-means and PCA
+
+- PCA is a generalization of K-means
+- K-means is a special case of PCA where the principal components are the cluster centers
