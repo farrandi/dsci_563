@@ -95,48 +95,51 @@ kmeans.predict(new_data) # predict cluster for new data
 
 1. **Elbow Method**:
 
-   - Specific to k-means
-   - $\text{Inertia} = \text{sum of intra-cluster distances}$
-     - Sum of centroid to point distances of all points in the cluster of all clusters $\sum_{i=1}^{K} \sum_{x \in C_i} ||x - \mu_i||^2$
-   - Inertia decreases as K increases, until it reaches 0 when K = n
-   - Plot inertia vs K
-     - Elbow point: point where inertia starts to decrease more slowly
-   - Choose K at elbow point
+<img src="images/1_elbow.png" width="400">
 
-   ```python
-   from yellowbrick.cluster import KElbowVisualizer
+- Specific to k-means
+- $\text{Inertia} = \text{sum of intra-cluster distances}$
+  - Sum of centroid to point distances of all points in the cluster of all clusters $\sum_{i=1}^{K} \sum_{x \in C_i} ||x - \mu_i||^2$
+- Inertia decreases as K increases, until it reaches 0 when K = n
+- Plot inertia vs K
+  - Elbow point: point where inertia starts to decrease more slowly
+- Choose K at elbow point
 
-    model = KMeans(n_init='auto')
-    visualizer = KElbowVisualizer(model, k=(1, 10))
+```python
+from yellowbrick.cluster import KElbowVisualizer
 
-    visualizer.fit(XX)  # Fit the data to the visualizer
-    visualizer.show();
-   ```
+ model = KMeans(n_init='auto')
+ visualizer = KElbowVisualizer(model, k=(1, 10))
+
+ visualizer.fit(XX)  # Fit the data to the visualizer
+ visualizer.show();
+```
 
 2. **Silhouette Score**:
+   <img src="images/1_silh.png" width="400">
 
-   - **Not dependent on cluster centers** -> can be used to compare different clustering algorithms
-   - Gets worst as K increases, since being closer to neigouring clusters
-     $$\text{Silhouette Score} = \frac{b - a}{\max(a, b)}$$
+- **Not dependent on cluster centers** -> can be used to compare different clustering algorithms
+- Gets worst as K increases, since being closer to neigouring clusters
+  $$\text{Silhouette Score} = \frac{b - a}{\max(a, b)}$$
 
-   - $a$: Mean distance between a sample and all other points in the same cluster
-   - $b$: Mean distance between a sample and all other points in the next nearest cluster
-   - Range: $[-1, 1]$
-     - **1**: Object is well matched to its own cluster and poorly matched to neighboring clusters (BEST)
-     - **0**: Object is not matched to its own cluster and might be better in neighboring clusters
-     - **-1**: Object is poorly matched to its own cluster and well matched to neighboring clusters (WORST)
+- $a$: Mean distance between a sample and all other points in the same cluster
+- $b$: Mean distance between a sample and all other points in the next nearest cluster
+- Range: $[-1, 1]$
+  - **1**: Object is well matched to its own cluster and poorly matched to neighboring clusters (BEST)
+  - **0**: Object is not matched to its own cluster and might be better in neighboring clusters
+  - **-1**: Object is poorly matched to its own cluster and well matched to neighboring clusters (WORST)
 
-   ```python
-   from yellowbrick.cluster import SilhouetteVisualizer
+```python
+from yellowbrick.cluster import SilhouetteVisualizer
 
-   model = KMeans(2, n_init='auto', random_state=42)
-   visualizer = SilhouetteVisualizer(model, colors="yellowbrick")
-   visualizer.fit(XX)  # Fit the data to the visualizer
-   visualizer.show();
-   ```
+model = KMeans(2, n_init='auto', random_state=42)
+visualizer = SilhouetteVisualizer(model, colors="yellowbrick")
+visualizer.fit(XX)  # Fit the data to the visualizer
+visualizer.show();
+```
 
-   - **y-axis**: Sample number (similar thickness = balanced cluster sizes)
-   - **x-axis**: Silhouette score
+- **y-axis**: Sample number (similar thickness = balanced cluster sizes)
+- **x-axis**: Silhouette score
 
 ## Gaussian Mixture Models (High-Level Overview)
 
