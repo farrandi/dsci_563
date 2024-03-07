@@ -12,6 +12,7 @@
 - Comparison to K-means:
   - does not have to assign all points to clusters
   - no `predict` method unlike K-means
+  - non-parametric
 
 | Pros                                  | Cons                                          |
 | ------------------------------------- | --------------------------------------------- |

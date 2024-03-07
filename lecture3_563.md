@@ -15,7 +15,6 @@
 
 - **Goal**
   - Find a low-dimensional representation of the data that captures as much of the variance as possible
-  - Loss function: minimize the reconstruction error (equal to getting the maximum variance)
 - **Approach**
   - Find the lower dimension hyperplane that minimizes the reconstruction error
   - Model is the best-fit hyperplane
@@ -29,8 +28,8 @@ $$(n \times d) = (n \times k) \cdot (k \times d)$$
 Usually $k << d$
 
 - $X$: original data, ($n \times d$)
-- $Z$: lower dimension hyperplane, ($n \times k$)
-- $W$: coordinates in the lower dimension, ($k \times d$)
+- $Z$: coordinates in the lower dimension, ($n \times k$)
+- $W$: lower dimension hyperplane, ($k \times d$)
   - $W$ is the principal components
   - Rows of $W$ are orthogonal to each other
 
@@ -40,8 +39,8 @@ $$\hat{X} = ZW$$
 
 _Note_: if $k = d$, then $Z$ is not necessarily $X$ but $\hat{X} = X$ (Frobenius norm)
 
-- **Objective Function**:
-  - Minimize $\|ZW - X\|_F^2$
+- **Objective/ Loss Function**:
+  - Minimize reconstruction error $\|ZW - X\|_F^2$
     - Frobeinus norm $||A||_F = \sqrt{\sum_{i=1}^m \sum_{j=1}^n a_{ij}^2}$
   - NOT the same as least squares
     - LS is vertical distance, PCA is orthogonal distance
@@ -137,3 +136,4 @@ print(pca.components_)
 
 - PCA is a generalization of K-means
 - K-means is a special case of PCA where the principal components are the cluster centers
+- K-means each example is expressed with only one component (one-hot encoding) but in PCA it is a linear combination of all components
