@@ -95,9 +95,10 @@ kmeans.predict(new_data) # predict cluster for new data
 
 1. **Elbow Method**:
 
+   - Specific to k-means
    - $\text{Inertia} = \text{sum of intra-cluster distances}$
-     - Sum of centroid to point distances of all points in the cluster of all clusters
-   - Inertia decreases as K increases
+     - Sum of centroid to point distances of all points in the cluster of all clusters $\sum_{i=1}^{K} \sum_{x \in C_i} ||x - \mu_i||^2$
+   - Inertia decreases as K increases, until it reaches 0 when K = n
    - Plot inertia vs K
      - Elbow point: point where inertia starts to decrease more slowly
    - Choose K at elbow point
@@ -113,14 +114,17 @@ kmeans.predict(new_data) # predict cluster for new data
    ```
 
 2. **Silhouette Score**:
-   $$\text{Silhouette Score} = \frac{b - a}{\max(a, b)}$$
+
+   - **Not dependent on cluster centers** -> can be used to compare different clustering algorithms
+   - Gets worst as K increases, since being closer to neigouring clusters
+     $$\text{Silhouette Score} = \frac{b - a}{\max(a, b)}$$
 
    - $a$: Mean distance between a sample and all other points in the same cluster
    - $b$: Mean distance between a sample and all other points in the next nearest cluster
    - Range: $[-1, 1]$
-     - 1: Object is well matched to its own cluster and poorly matched to neighboring clusters
-     - 0: Object is not matched to its own cluster and might be better in neighboring clusters
-     - -1: Object is poorly matched to its own cluster and well matched to neighboring clusters
+     - **1**: Object is well matched to its own cluster and poorly matched to neighboring clusters (BEST)
+     - **0**: Object is not matched to its own cluster and might be better in neighboring clusters
+     - **-1**: Object is poorly matched to its own cluster and well matched to neighboring clusters (WORST)
 
    ```python
    from yellowbrick.cluster import SilhouetteVisualizer
@@ -131,10 +135,13 @@ kmeans.predict(new_data) # predict cluster for new data
    visualizer.show();
    ```
 
+   - **y-axis**: Sample number (similar thickness = balanced cluster sizes)
+   - **x-axis**: Silhouette score
+
 ## Gaussian Mixture Models (High-Level Overview)
 
-- Motivation:
-  - K-means assumes spherical clusters
+- **Motivation**:
+  - K-means makes _linear_ decision boundaries
   - GMMs can have more flexible cluster shapes
 
 <img src="images/1_gmm_type.png" width="550">
@@ -178,16 +185,15 @@ $$P(x) = \sum_{k=1}^{K} \pi_k \mathcal{N}(x | \mu_k, \Sigma_k)$$
 - The generative story of the model assumes that each data point in the dataset is generated from one of the Gaussian components
   - Choose $k$ with probability $\pi_k$
   - Generate data point from $\mathcal{N}(x | \mu_k, \Sigma_k)$
-- **High Level Algorithm**:
-  1. Initialize $\pi_k, \mu_k, \Sigma_k$
+- **High Level Algorithm** (non-convex optimization):
+  1. Initialize $\pi_k, \mu_k, \Sigma_k$ (sensitive to init, can init with k-means)
   2. E-step: Compute the probability of each data point belonging to each cluster
   3. M-step: Update $\pi_k, \mu_k, \Sigma_k$ to maximize the likelihood of the data
   4. Repeat steps 2 and 3 until convergence
-- Under the hood, GMMs use the Expectation-Maximization (EM) algorithm.
+- Under the hood, GMMs use the **Expectation-Maximization (EM)** algorithm.
   - Basic idea: treat cluster assignments as hidden variables and iteratively update them
-
-### GMM Properties
-
-- Sensitivity to initialization
-- Non-convex optimization problem
-  - Can have multiple local optima
+  - **E-step**: for each point, compute the probability of it belonging to each cluster
+  - **M-step**: for each cluster, update the parameters to maximize the likelihood of the data
+- **Other Properties**:
+  - Can constrain the covariance matrix
+  - Number of clusters is a hyperparameter and has a significant impact on the model
