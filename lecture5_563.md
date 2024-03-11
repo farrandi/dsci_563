@@ -58,21 +58,25 @@
 - NN to obtain short and dense word vectors
 - **Architecture**:
 
-  - **Input layer**: one-hot encoded vector of the target word (size = $V \times 1$)
+<img src="images/5_w2v_nn.png" width="500">
 
-    > $W$ = input layer to hidden layer weights (size = $V \times d$)
-    > $\text{hidden} = W^T \times \text{input}$
+- **Input layer**: one-hot encoded vector of the target word (size = $V \times 1$)
 
-  - **Hidden layer**: linear transformation (no activation function) to obtain the word vector (size = $d \times 1$)
+  > $W$ = input layer to hidden layer weights (size = $V \times d$)
+  > $\text{hidden} = W^T \times \text{input}$
 
-    > $W_c$ = hidden layer to output layer weights (size = $V \times d$)
-    > $\text{output} = W_c \times \text{hidden}$
+- **Hidden layer**: linear transformation (no activation function) to obtain the word vector (size = $d \times 1$)
 
-  - **Output layer**: softmax layer to predict the context words (size = $V \times 1$)
-    - Returns a one-hot encoded vector of the context word
+  > $W_c$ = hidden layer to output layer weights (size = $V \times d$)
+  > $\text{output} = W_c \times \text{hidden}$
+
+- **Output layer**: softmax layer to predict the context words (size = $V \times 1$)
+
+  - Returns a one-hot encoded vector of the context word
 
 - The dense representation of the word:
-  - $W$: word embedding matrix (size = $V \times d$)
+  - $W$: **word embedding matrix** (size = $V \times d$)
+    - This is the main output of the algorithm
   - $W_c$: shared context embedding matrix (size = $V \times d$)
 - Train multiple target+context pairs until the weights converge
   </br>
@@ -108,8 +112,30 @@ $$\arg \max\limits_\theta \prod\limits_{(w_c,w_t) \in D} P(w_c|w_t;\theta) \appr
 #### Success of word2vec
 
 - Can do analogy tasks
+
   - e.g. man to king as women to (queen)
   - **MAN : KING :: WOMAN : ?**
   - solce by: $\vec{X} = \vec{\text{KING}} − \vec{\text{MAN}} + \vec{\text{WOMAN}}$
 
+- There are some biases in the word embeddings because they are trained on biased data
+
 <img src="images/5_analogy.png" width="300">
+
+### Other Word Embeddings
+
+#### FastText
+
+- NLP library by Facebook research
+- Includes an algorithm which is an extension to word2vec
+- Helps deal with unknown words elegantly
+- Breaks words into several n-gram subwords
+- Example: trigram sub-words for berry are ber, err, rry
+  - Embedding(berry) = embedding(ber) + embedding(err) + embedding(rry)
+
+#### gloVe (Global Vectors for Word Representation)
+
+- Starts with the co-occurrence matrix
+  - Co-occurrence can be interpreted as an indicator of semantic proximity of words
+- Takes advantage of global count statistics
+- Predicts co-occurrence ratios
+- Loss based on word frequency
