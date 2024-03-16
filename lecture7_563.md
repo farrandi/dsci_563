@@ -159,6 +159,7 @@ valid_mat = create_Y_from_ratings(X_valid, N, M, user_mapper, item_mapper)
       - Only consider the available values
       - Add L2-reg to the loss function for W and Z
       - $f(Z,W) = \sum_{i,j} ||W^TZ_{ij} - Y_{ij}||^2 + \lambda_1||W||^2 + \lambda_2||Z||^2$
+      - This accounts for the missing values and the regularization terms prevent overfitting (representations are not too complex)
       - This improved the RMSE score bby 7% in the Netflix competition
       - Optimize using SGD (stoachastic gradient descent) and WALS (weighted alternating least squares)
 - **Other Notes**:
@@ -220,12 +221,15 @@ Source: [Google ML](https://developers.google.com/machine-learning/recommendatio
 
 - **Cosine**:
   - $d(x,y) = \frac{x \cdot y}{||x|| \cdot ||y||}$
-  - Collinear = 1, orthogonal = 0
+  - Collinear = 1, orthogonal = 0 (want a value close to 1)
   - It is the angle between the two vectors
+  - Rank (high to low): C, A, B
 - **Euclidean**:
   - $d(x,y) = \sqrt{\sum_{i=1}^n (x_i - y_i)^2}$
-  - It is the straight line distance between the two points
+  - It is the straight line distance between the two points (want smaller distance)
+  - Rank (high to low): B, C, A
 - **Dot Product**:
   - $d(x,y) = x \cdot y$
   - It is the projection of one vector onto the other
-  - If vectors are normalized, it is the same as cosine similarity
+  - If vectors are normalized, it is the same as cosine similarity (want larger value)
+  - Rank (high to low): A, B, C
