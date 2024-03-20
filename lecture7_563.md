@@ -34,7 +34,6 @@
 
 - Also referred to as the **$Y$ matrix**
 - Not actually used in real life because it will be very large (also sparse)
-- It will store users in rows and items in columns and the values will be the ratings
 - Train and validation will have same number of rows (users) and columns (items)
   - $N$ users and $M$ items
   - $Y_{ij}$ is the rating of user $i$ for item $j$
@@ -158,7 +157,7 @@ valid_mat = create_Y_from_ratings(X_valid, N, M, user_mapper, item_mapper)
     - **Collaborative Filtering Loss Function**:
       - Only consider the available values
       - Add L2-reg to the loss function for W and Z
-      - $f(Z,W) = \sum_{i,j} ||W^TZ_{ij} - Y_{ij}||^2 + \lambda_1||W||^2 + \lambda_2||Z||^2$
+      - $f(Z,W) = \sum_{i,j} ||W^TZ_{ij} - Y_{ij}||^2 + \frac{\lambda_1}{2}||W||^2 + \frac{\lambda_2}{2}||Z||^2$
       - This accounts for the missing values and the regularization terms prevent overfitting (representations are not too complex)
       - This improved the RMSE score bby 7% in the Netflix competition
       - Optimize using SGD (stoachastic gradient descent) and WALS (weighted alternating least squares)
