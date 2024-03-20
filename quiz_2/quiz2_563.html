@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>quiz2_563</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="quiz2_563_files/libs/clipboard/clipboard.min.js"></script>
+<script src="quiz2_563_files/libs/quarto-html/quarto.js"></script>
+<script src="quiz2_563_files/libs/quarto-html/popper.min.js"></script>
+<script src="quiz2_563_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="quiz2_563_files/libs/quarto-html/anchor.min.js"></script>
+<link href="quiz2_563_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="quiz2_563_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="quiz2_563_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="quiz2_563_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="quiz2_563_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+
+
+<section id="quiz-2---563" class="level1">
+<h1>Quiz 2 - 563</h1>
+<section id="word-embeddings" class="level2">
+<h2 class="anchored" data-anchor-id="word-embeddings">Word Embeddings</h2>
+<ul>
+<li><strong>Motivation</strong>: You can understand a word by the context/company it keeps.</li>
+</ul>
+<section id="introduction" class="level3">
+<h3 class="anchored" data-anchor-id="introduction">Introduction</h3>
+<ul>
+<li>Standard approach: put words in vector space and the distance between words is the similarity between them.</li>
+<li><code>word2vec</code> is unsupervised/ semi-supervised learning because:
+<ul>
+<li>closely related to dimensionality reduction + extracting meaninggful representation from raw data</li>
+<li>do not need any labeled data</li>
+<li>running text is used as supervision signal</li>
+</ul></li>
+</ul>
+</section>
+<section id="word-representation" class="level3">
+<h3 class="anchored" data-anchor-id="word-representation">Word Representation</h3>
+<ul>
+<li><strong>One-hot representation</strong>:
+<ul>
+<li>Simplest way to represent a word</li>
+<li>OHE vector is a vector of all 0s except for a 1 at the index of the word in the vocabulary
+<ul>
+<li>rows = words in sentence, columns = words in vocabulary</li>
+</ul></li>
+<li><strong>Disadvantages</strong>:
+<ul>
+<li>High dimensionality</li>
+<li>No notion of similarity between words (dot product = 0)</li>
+<li>No notion of context</li>
+</ul></li>
+</ul></li>
+<li><strong>Term-term co-occurrence matrix</strong>:
+<ul>
+<li>A matrix where each row and column corresponds to a word in the vocabulary</li>
+<li>The value in the i-th row and j-th column is the number of times word i and word j appear together in a context window
+<ul>
+<li><strong>Context window</strong>: a fixed-size window that slides over the text (e.g.&nbsp;window size = 2 means 2 words to the left and 2 words to the right)</li>
+</ul></li>
+<li><strong>Disadvantages</strong>:
+<ul>
+<li>High dimensionality</li>
+<li>Sparse</li>
+<li>Does not capture polysemy (multiple meanings of a word)</li>
+</ul></li>
+</ul></li>
+</ul>
+<p><img src="../images/5_word_vec_ttcm.png" width="400"></p>
+<section id="dense-word-representations" class="level4">
+<h4 class="anchored" data-anchor-id="dense-word-representations">Dense Word Representations</h4>
+<ul>
+<li>Term-term co-occurrence matrix is sparse and high-dimensional</li>
+<li>Better to learn short and dense vectors for words
+<ul>
+<li>Easier to store and train</li>
+<li>Better generalization</li>
+</ul></li>
+<li>Approaches:
+<ul>
+<li><strong>Latent Semantic Analysis (LSA)</strong>: Use SVD to reduce the dimensionality of the term-term co-occurrence matrix
+<ul>
+<li>Works better for small datasets compared to word2vec</li>
+</ul></li>
+<li><strong>Word2Vec</strong>: Use neural networks to learn word embeddings</li>
+</ul></li>
+</ul>
+</section>
+<section id="word2vec" class="level4">
+<h4 class="anchored" data-anchor-id="word2vec">Word2Vec</h4>
+<ul>
+<li>Create <strong>short and dense</strong> word embeddings using neural networks</li>
+<li><strong>Idea</strong>: Predict the context of a word given the word itself
+<ul>
+<li><strong>Skip-gram</strong>: Predict the context words given the target word</li>
+<li><strong>Continuous Bag of Words (CBOW)</strong>: Predict the target word given the context words</li>
+</ul></li>
+<li>Two moderately efficient training algorithms:
+<ul>
+<li><strong>Hierarchical softmax</strong>: Use a binary tree to represent all words in the vocabulary</li>
+<li><strong>Negative sampling</strong>: Treat the problem as a binary classification problem</li>
+</ul></li>
+</ul>
+<section id="word2vec-skip-gram" class="level5">
+<h5 class="anchored" data-anchor-id="word2vec-skip-gram">word2vec: Skip-gram</h5>
+<ul>
+<li>Predict the context words given the target word</li>
+<li>NN to obtain short and dense word vectors</li>
+<li><strong>Architecture</strong>:</li>
+</ul>
+<p><img src="../images/5_w2v_nn.png" width="400"></p>
+<ul>
+<li><p><strong>Input layer</strong>: one-hot encoded vector of the target word (size = <span class="math inline">\(V \times 1\)</span>)</p>
+<blockquote class="blockquote">
+<p><span class="math inline">\(W\)</span> = input layer to hidden layer weights (size = <span class="math inline">\(V \times d\)</span>) <span class="math inline">\(\text{hidden} = W^T \times \text{input}\)</span></p>
+</blockquote></li>
+<li><p><strong>Hidden layer</strong>: linear transformation (no activation function) to obtain the word vector (size = <span class="math inline">\(d \times 1\)</span>)</p>
+<blockquote class="blockquote">
+<p><span class="math inline">\(W_c\)</span> = hidden layer to output layer weights (size = <span class="math inline">\(V \times d\)</span>) <span class="math inline">\(\text{output} = W_c \times \text{hidden}\)</span></p>
+</blockquote></li>
+<li><p><strong>Output layer</strong>: softmax layer to predict the context words (size = <span class="math inline">\(V \times 1\)</span>)</p>
+<ul>
+<li>Returns a one-hot encoded vector of the context word</li>
+</ul></li>
+<li><p>The dense representation of the word:</p>
+<ul>
+<li><span class="math inline">\(W\)</span>: <strong>word embedding matrix</strong> (size = <span class="math inline">\(V \times d\)</span>)
+<ul>
+<li>This is the main output of the algorithm</li>
+</ul></li>
+<li><span class="math inline">\(W_c\)</span>: shared context embedding matrix (size = <span class="math inline">\(V \times d\)</span>)</li>
+</ul></li>
+<li><p>Train multiple target+context pairs until the weights converge <br></p></li>
+<li><p><strong>Example</strong>:</p>
+<ul>
+<li>“Add freshly <em>squeezed</em> [pineapple] <em>juice</em> to your smoothie.
+<ul>
+<li>Target word: pineapple</li>
+<li>NN outputs probability distribution of context words: {squeezed, juice}</li>
+</ul></li>
+</ul></li>
+</ul>
+<section id="skip-gram-objective-function" class="level6">
+<h6 class="anchored" data-anchor-id="skip-gram-objective-function">Skip-Gram Objective Function</h6>
+<p><span class="math display">\[\arg \max\limits_\theta \prod\limits_{(w_c,w_t) \in D} P(w_c|w_t;\theta) \approx \prod\limits_{(w_c,w_t) \in D} \frac{e^{w_c.w_t}}{\sum\limits_{\substack{c' \in V}} e^{w_{c'}.w_t}}\]</span></p>
+<ul>
+<li><strong>Want to get the context word with the highest probability given the target word</strong></li>
+<li><span class="math inline">\(w_t\)</span> → target word</li>
+<li><span class="math inline">\(w_c\)</span> → context word</li>
+<li><span class="math inline">\(D\)</span> → the set of all target and context pairs from the text</li>
+<li><span class="math inline">\(P(w_c|w_t;\theta)\)</span> → probability of context word given the target word</li>
+<li><strong>Assumption</strong>: maximizing this objective would lead to good word embeddings</li>
+</ul>
+</section>
+<section id="hyperparameters" class="level6">
+<h6 class="anchored" data-anchor-id="hyperparameters">Hyperparameters</h6>
+<ul>
+<li>Dimensionality of word vectors (<span class="math inline">\(d\)</span>)</li>
+<li>Window size:
+<ul>
+<li>Small window size: captures more syntactic information (e.g.&nbsp;verb-noun relationships)</li>
+<li>Large window size: captures more semantic information (e.g.&nbsp;country-capital relationships)</li>
+</ul></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="pre-trained-word-embeddings" class="level4">
+<h4 class="anchored" data-anchor-id="pre-trained-word-embeddings">Pre-trained Word Embeddings</h4>
+<ul>
+<li><a href="https://code.google.com/archive/p/word2vec/">word2vec</a></li>
+<li><a href="https://wikipedia2vec.github.io/wikipedia2vec/pretrained/">wikipedia2vec</a>: for 12 languages</li>
+<li><a href="https://nlp.stanford.edu/projects/glove/">GloVe</a>: based on GloVe algorithm (Stanford)</li>
+<li><a href="https://fasttext.cc/docs/en/pretrained-vectors.html">fastText pre-trained embeddings for 294 languages</a></li>
+</ul>
+</section>
+<section id="success-of-word2vec" class="level4">
+<h4 class="anchored" data-anchor-id="success-of-word2vec">Success of word2vec</h4>
+<ul>
+<li><p>Can do analogy tasks</p>
+<ul>
+<li>e.g.&nbsp;man to king as women to (queen)</li>
+<li><strong>MAN : KING :: WOMAN : ?</strong></li>
+<li>solce by: <span class="math inline">\(\vec{X} = \vec{\text{KING}} − \vec{\text{MAN}} + \vec{\text{WOMAN}}\)</span></li>
+</ul></li>
+<li><p>There are some biases in the word embeddings because they are trained on biased data</p></li>
+</ul>
+<p><img src="../images/5_analogy.png" width="250"></p>
+</section>
+</section>
+<section id="other-word-embeddings" class="level3">
+<h3 class="anchored" data-anchor-id="other-word-embeddings">Other Word Embeddings</h3>
+<section id="fasttext" class="level4">
+<h4 class="anchored" data-anchor-id="fasttext">FastText</h4>
+<ul>
+<li>NLP library by Facebook research</li>
+<li>Includes an algorithm which is an extension to word2vec</li>
+<li>Helps deal with unknown words elegantly</li>
+<li>Breaks words into several n-gram subwords</li>
+<li>Example: trigram sub-words for berry are ber, err, rry
+<ul>
+<li>Embedding(berry) = embedding(ber) + embedding(err) + embedding(rry)</li>
+</ul></li>
+</ul>
+</section>
+<section id="glove-global-vectors-for-word-representation" class="level4">
+<h4 class="anchored" data-anchor-id="glove-global-vectors-for-word-representation">gloVe (Global Vectors for Word Representation)</h4>
+<ul>
+<li>Starts with the co-occurrence matrix
+<ul>
+<li>Co-occurrence can be interpreted as an indicator of semantic proximity of words</li>
+</ul></li>
+<li>Takes advantage of global count statistics</li>
+<li>Predicts co-occurrence ratios</li>
+<li>Loss based on word frequency</li>
+</ul>
+</section>
+</section>
+</section>
+<section id="word-embedding-applications" class="level2">
+<h2 class="anchored" data-anchor-id="word-embedding-applications">Word Embedding Applications</h2>
+<ul>
+<li>Using word embeddings for various ML (NLP) tasks</li>
+<li>Before using it for application, need to <strong>evaluate quality</strong> of word embeddings:
+<ul>
+<li>Examine a number of word pairs for similarity scores (use TOEFL MCQ dataset)</li>
+<li>Examine different analogies for stereotypes and biases they encode</li>
+<li>Visualize embeddings in two dimensions</li>
+</ul></li>
+</ul>
+<section id="document-similarity-and-text-classification" class="level3">
+<h3 class="anchored" data-anchor-id="document-similarity-and-text-classification">Document Similarity and Text Classification</h3>
+<ul>
+<li><strong>Motivation</strong>: You can understand a document by the context/company it keeps.</li>
+<li>Assuming we have reasonable representations of words, we can represent a paragraph/ document as:
+<ol type="1">
+<li>Average embeddings</li>
+<li>Concatenate embeddings</li>
+</ol></li>
+</ul>
+<section id="averaging-embeddings" class="level4">
+<h4 class="anchored" data-anchor-id="averaging-embeddings">Averaging Embeddings</h4>
+<ul>
+<li>Do it with <code>spacy</code></li>
+<li>We do not necessarily get expected representation of text
+<ul>
+<li>e.g.&nbsp;“Machine Learning” and “Learning Machine” will have same representation</li>
+</ul></li>
+<li>For long sentences or documents, this can get very noisy (mix of different signals)</li>
+</ul>
+</section>
+<section id="concatenating-embeddings" class="level4">
+<h4 class="anchored" data-anchor-id="concatenating-embeddings">Concatenating Embeddings</h4>
+<ul>
+<li><code>spacy</code>’s <code>mlp.pipe()</code> takes iterable of texts and returns an iterable of <code>Doc</code> objects.</li>
+<li>spaCy uses corpus of text styles from telephone conversations, newswire, newsgroups, broadcast news, weblogs, and conversational telephone speech.</li>
+<li>Might need to train your own for medical, tweets, etc.</li>
+</ul>
+</section>
+</section>
+<section id="word2vec-for-product-recommendations" class="level3">
+<h3 class="anchored" data-anchor-id="word2vec-for-product-recommendations">word2vec for Product Recommendations</h3>
+<ul>
+<li>Not so common, but it’s possible</li>
+<li>Comparisons:
+<ul>
+<li>Words -&gt; Products</li>
+<li>Sentences -&gt; Purchase history of users</li>
+<li>Vocabulary -&gt; Products</li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="manifold-learning" class="level2">
+<h2 class="anchored" data-anchor-id="manifold-learning">Manifold Learning</h2>
+<p><img src="../images/6_swiss_roll.png" width="500"></p>
+<p><a href="https://www.cs.ubc.ca/~schmidtm/Courses/340-F19/L31.pdf">source</a></p>
+<ul>
+<li><strong>Manifold</strong>: Lower-dimensional structure embedded within a higher-dimensional space (can be curved/ twisted)</li>
+<li><strong>Manifold Learning</strong>: Techniques to learn the structure of the manifold from the data
+<ul>
+<li>Based on the idea of finding low dimensional representation that <strong>preserves the distances between points</strong> as best as possible</li>
+<li>Real-world data often lies on a low-dimensional manifold</li>
+</ul></li>
+<li>Common methods:
+<ul>
+<li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.manifold.MDS.html">Multi-dimensional scaling (MDS)</a></li>
+<li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.manifold.Isomap.html#sklearn.manifold.Isomap">ISOMAP</a></li>
+<li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.manifold.LocallyLinearEmbedding.html">Locally linear embedding (LLE)</a></li>
+<li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html">t-SNE</a></li>
+<li><a href="https://umap-learn.readthedocs.io/en/latest/">UMAP [best one]</a></li>
+</ul></li>
+</ul>
+<section id="t-sne-t-distributed-stochastic-neighbor-embedding" class="level3">
+<h3 class="anchored" data-anchor-id="t-sne-t-distributed-stochastic-neighbor-embedding">t-SNE (t-distributed Stochastic Neighbor Embedding)</h3>
+<ul>
+<li>t-SNE applies <strong>non-linear</strong> transformation to the data
+<ul>
+<li>PCA is a linear dimensionality reduction technique</li>
+</ul></li>
+<li>Mostly used for visualization</li>
+<li>Does not construct an explicit mapping function from the high-dimensional space to the low-dimensional space
+<ul>
+<li>It <strong>optimizes the position of the points in the low-dimensional space</strong></li>
+</ul></li>
+<li>Hyperparameters:
+<ul>
+<li><code>perplexity</code>: Number of nearest neighbors to consider</li>
+<li><code>learning_rate</code>: Step size for gradient descent</li>
+<li><code>n_iter</code>: Number of iterations</li>
+</ul></li>
+<li><strong>Cons</strong>:
+<ul>
+<li>slow and does not scale well to large datasets</li>
+<li>random initialization can lead to different results</li>
+<li>sensitive to hyperparameters (perplexity)</li>
+<li>Need to re-run when new data is added</li>
+</ul></li>
+</ul>
+<section id="example-with-scikit-learn" class="level4">
+<h4 class="anchored" data-anchor-id="example-with-scikit-learn">Example with <code>scikit-learn</code></h4>
+</section>
+<section id="high-level-algorithm" class="level4">
+<h4 class="anchored" data-anchor-id="high-level-algorithm">High-level Algorithm</h4>
+<ul>
+<li>Idea: Preserve the similarity between points in high-dimensional space in the low-dimensional space</li>
+</ul>
+<p><strong>In high-dimensional space,</strong></p>
+<ol type="1">
+<li>Compute pairwise similarity between points as probabilities</li>
+<li>Similarity b/w <span class="math inline">\(x_i\)</span> and <span class="math inline">\(x_j\)</span> is <span class="math inline">\(p_{ij}\)</span>
+<ul>
+<li><span class="math inline">\(p_{ij}\)</span> is calculated using Gaussian distribution, centered at <span class="math inline">\(x_i\)</span>
+<ul>
+<li>It is the density of <span class="math inline">\(x_j\)</span> under the Gaussian centered at <span class="math inline">\(x_i\)</span></li>
+<li><span class="math inline">\(p_{ij}\)</span> high if <span class="math inline">\(x_i\)</span> and <span class="math inline">\(x_j\)</span> are close to each other (and low if far)</li>
+</ul></li>
+<li>Variance <span class="math inline">\(\sigma^2\)</span> of the Gaussian is influenced by <code>perplexity</code> hyperparameter
+<ul>
+<li><code>perplexity</code> is a measure of effective number of neighbors to consider</li>
+<li>Higher perplexity, larger variance, more neighbors</li>
+</ul></li>
+</ul></li>
+</ol>
+<p><strong>In low-dimensional space,</strong></p>
+<ol type="1">
+<li>Randomly initialize points in low-dimensional space (e.g.&nbsp;PCA)</li>
+<li>Calculates a similar set of pairwise probabilities <span class="math inline">\(q_{ij}\)</span> in the low-dimensional space
+<ul>
+<li><span class="math inline">\(q_{ij}\)</span> is calculated using <strong>t-distribution</strong> (NOT Gaussian) to mitigate crowding problem
+<ul>
+<li>Makes sure points are not crowded together</li>
+</ul></li>
+<li>t-distribution has heavier tails than Gaussian
+<ul>
+<li>Assigns a higher probability to points that are far apart</li>
+</ul></li>
+</ul></li>
+</ol>
+<p><strong>Loss function</strong></p>
+<ul>
+<li>Minimize the difference between <span class="math inline">\(p_{ij}\)</span> and <span class="math inline">\(q_{ij}\)</span> using gradient descent (use Kullback-Leibler divergence)</li>
+</ul>
+<p><span class="math display">\[KL(P||Q) = \sum_{i,j}p_{ij}\log\left(\frac{p_{ij}}{q_{ij}}\right)\]</span></p>
+</section>
+<section id="hyperparamter-perplexity" class="level4">
+<h4 class="anchored" data-anchor-id="hyperparamter-perplexity">Hyperparamter: Perplexity</h4>
+<ul>
+<li><p>Perplexity is a measure of effective number of neighbors to consider</p>
+<ul>
+<li>Low: consider fewer neighbors, smaller variance</li>
+<li>High: consider more neighbors, larger variance</li>
+</ul></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="recommender-systems-introduction" class="level2">
+<h2 class="anchored" data-anchor-id="recommender-systems-introduction">Recommender Systems Introduction</h2>
+<ul>
+<li>A recommender suggests a particular product or service to users they are likely to consume.</li>
+<li><strong>Why is it important?</strong>
+<ul>
+<li>Everything we buy or consume is influenced by this (music, shopping, movies, etc.)</li>
+<li>It is the core of success for many companies (e.g.&nbsp;spotify, amazon, netflix, etc.)</li>
+<li>Tool <strong>to reduce the effort of users</strong> to find what they want</li>
+</ul></li>
+<li><strong>Ethical considerations</strong>:
+<ul>
+<li>Can lead to <strong>filter bubbles</strong> (e.g.&nbsp;political views, etc.)</li>
+<li>Can lead to <strong>privacy issues</strong> (e.g.&nbsp;tracking user behavior)</li>
+</ul></li>
+</ul>
+<section id="data-and-approaches-to-recommender-systems" class="level3">
+<h3 class="anchored" data-anchor-id="data-and-approaches-to-recommender-systems">Data and Approaches to Recommender Systems</h3>
+<ul>
+<li><strong>Data</strong>:
+<ul>
+<li>purchase history</li>
+<li>user-system interactions (e.g.&nbsp;clicks, likes, etc.)</li>
+<li>features of the items (e.g.&nbsp;genre, price, etc.)</li>
+</ul></li>
+<li><strong>Approaches</strong>:
+<ul>
+<li><strong>Collaborative filtering</strong>:
+<ul>
+<li>Unsupervised learning</li>
+<li>Have labels <span class="math inline">\(y_{ij}\)</span> (ratings for user <span class="math inline">\(i\)</span> and item <span class="math inline">\(j\)</span>)</li>
+<li>Learn latent features of users and items</li>
+</ul></li>
+<li><strong>Content-based filtering</strong>:
+<ul>
+<li>Supervised learning</li>
+<li>Extract features of items/ users to predict ratings</li>
+</ul></li>
+<li><strong>Hybrid methods</strong>:
+<ul>
+<li>Combine both approaches</li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="recommender-systems-structure" class="level2">
+<h2 class="anchored" data-anchor-id="recommender-systems-structure">Recommender Systems Structure</h2>
+<section id="utility-matrix" class="level3">
+<h3 class="anchored" data-anchor-id="utility-matrix">Utility Matrix</h3>
+<ul>
+<li>Also referred to as the <strong><span class="math inline">\(Y\)</span> matrix</strong></li>
+<li>Not actually used in real life because it will be very large (also sparse)</li>
+<li>Train and validation will have same number of rows (users) and columns (items)
+<ul>
+<li><span class="math inline">\(N\)</span> users and <span class="math inline">\(M\)</span> items</li>
+<li><span class="math inline">\(Y_{ij}\)</span> is the rating of user <span class="math inline">\(i\)</span> for item <span class="math inline">\(j\)</span></li>
+</ul></li>
+</ul>
+<p><img src="../images/7_util_mat.png" width="400"></p>
+<ul>
+<li><strong>predict rating <span class="math inline">\(\neq\)</span> regression or classification</strong>:
+<ul>
+<li>It is a different problem because we don’t have a target variable</li>
+<li>We have to predict the missing values in the utility matrix</li>
+</ul></li>
+</ul>
+<section id="creating-a-utility-matrix" class="level4">
+<h4 class="anchored" data-anchor-id="creating-a-utility-matrix">Creating a Utility Matrix</h4>
+<ul>
+<li>Map to get user/item id -&gt; indices (utility matrix)</li>
+<li>Inverse map to get indices -&gt; user/item id</li>
+</ul>
+</section>
+</section>
+<section id="evaluation" class="level3">
+<h3 class="anchored" data-anchor-id="evaluation">Evaluation</h3>
+<ul>
+<li>No notion of “accurate” recommendations, but still need to evaluate</li>
+<li>Unsupervised learning but <u>split the data and evaluate </u>
+<ul>
+<li><strong>SPLIT TRAIN /VALID ON RATINGS, NOT UTILITY MATRIX</strong></li>
+<li>Utility matrix of train and validation will be <strong>the same</strong></li>
+<li>Code shown below, not really going to use <code>y</code></li>
+</ul></li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>X_train, X_valid, y_train, y_valid <span class="op">=</span> train_test_split(</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    X, y, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li><strong>RMSE</strong>:
+<ul>
+<li>It is the most common metric</li>
+<li>It compares the predicted ratings with the actual ratings</li>
+</ul></li>
+</ul>
+</section>
+<section id="baseline-approaches" class="level3">
+<h3 class="anchored" data-anchor-id="baseline-approaches">Baseline Approaches</h3>
+<ul>
+<li><p><strong>Global Average</strong>:</p>
+<ul>
+<li>Predict everything as the global average rating</li>
+<li>It is a very simple model</li>
+</ul></li>
+<li><p><strong>Per-User Average</strong>:</p>
+<ul>
+<li>Predict everything as the average rating of the user</li>
+</ul></li>
+<li><p><strong>Per-Item Average</strong>:</p>
+<ul>
+<li>Predict everything as the average rating of the item</li>
+</ul></li>
+<li><p><strong>Per-User and Per-Item Average</strong>:</p>
+<ul>
+<li>Predict everything as the average of the user and the item</li>
+</ul></li>
+<li><p><strong>KNN</strong>:</p>
+<ul>
+<li>Calculate distance between examples usign features where neither value is missing</li>
+</ul></li>
+</ul>
+<section id="other-possible-approaches" class="level4">
+<h4 class="anchored" data-anchor-id="other-possible-approaches">Other possible approaches</h4>
+<ol type="1">
+<li><strong>Clustering</strong>:
+<ul>
+<li>Cluster the items, then recommend items from the same cluster</li>
+</ul></li>
+<li><strong>Graphs and BFS</strong>:
+<ul>
+<li>Create a graph of users and items</li>
+<li>Use BFS to recommend items</li>
+</ul></li>
+</ol>
+</section>
+</section>
+</section>
+<section id="collaborative-filtering" class="level2">
+<h2 class="anchored" data-anchor-id="collaborative-filtering">Collaborative Filtering</h2>
+<ul>
+<li>Unsupervised learning</li>
+<li><strong>Intuition</strong>:
+<ul>
+<li>People who agreed in the past are likely to agree again in future</li>
+<li>Leverage social information for recommendations</li>
+</ul></li>
+<li><strong>PCA ?</strong>:
+<ul>
+<li>To learn latent features of users and items</li>
+<li>Run on utility matrix</li>
+<li><strong>Problem</strong>: missing values
+<ul>
+<li>PCA loss function <span class="math inline">\(f(Z,W) = \sum_{i,j} ||W^TZ_{ij} - Y_{ij}||^2\)</span></li>
+<li>Cannot use SVD directly because have many missing values AND missing values make SVD undefined</li>
+</ul></li>
+<li><strong>Solutions</strong>:
+<ul>
+<li>Impute the values to do PCA
+<ul>
+<li>BUT, will introduce bias (distort the data)</li>
+<li>Result will be dominated by the imputed values</li>
+</ul></li>
+<li>Summing over only available values
+<ul>
+<li>Prone to overfitting</li>
+</ul></li>
+<li><strong>Collaborative Filtering Loss Function</strong>:
+<ul>
+<li>Only consider the available values</li>
+<li>Add L2-reg to the loss function for W and Z</li>
+<li><span class="math inline">\(f(Z,W) = \sum_{i,j} ||W^TZ_{ij} - Y_{ij}||^2 + \frac{\lambda_1}{2}||W||^2 + \frac{\lambda_2}{2}||Z||^2\)</span></li>
+<li>This accounts for the missing values and the regularization terms prevent overfitting (representations are not too complex)</li>
+<li>This improved the RMSE score bby 7% in the Netflix competition</li>
+<li>Optimize using SGD (stoachastic gradient descent) and WALS (weighted alternating least squares)</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><strong>Other Notes</strong>:
+<ul>
+<li>Result can be outside the range of the ratings</li>
+<li>Will have problems with cold start (new users or items)</li>
+</ul></li>
+<li>Use <code>surprise</code> library for collaborative filtering</li>
+</ul>
+<section id="z-and-w-in-collaborative-filtering" class="level3">
+<h3 class="anchored" data-anchor-id="z-and-w-in-collaborative-filtering">Z and W in Collaborative Filtering</h3>
+<p><img src="../images/7_zw.png" width="350"> <img src="../images/7_examplezw.png" width="400"></p>
+<ul>
+<li><span class="math inline">\(Z\)</span> is no longer the points in the new hyperplane and <span class="math inline">\(W\)</span> is no longer the weights</li>
+<li><strong><span class="math inline">\(Z\)</span></strong>: [row = user] Maps users to latent feature of items
+<ul>
+<li>e.g.&nbsp;left for animation, right for documentaries</li>
+</ul></li>
+<li><strong><span class="math inline">\(W\)</span></strong>: [col = item] Maps items to latent feature of users
+<ul>
+<li>e.g.&nbsp;top for animation lovers, bottom for documentary lovers</li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="distance-metrics" class="level2">
+<h2 class="anchored" data-anchor-id="distance-metrics">Distance Metrics</h2>
+<p><img src="../images/7_dist.png" width="300"></p>
+<ul>
+<li><strong>Cosine</strong>:
+<ul>
+<li><span class="math inline">\(d(x,y) = \frac{x \cdot y}{||x|| \cdot ||y||}\)</span></li>
+<li>Collinear = 1, orthogonal = 0 (want a value close to 1)</li>
+<li>It is the angle between the two vectors</li>
+<li>Rank (high to low): C, A, B</li>
+</ul></li>
+<li><strong>Euclidean</strong>:
+<ul>
+<li><span class="math inline">\(d(x,y) = ||x-y|| = \sqrt{\sum_{i=1}^n (x_i - y_i)^2}\)</span></li>
+<li>It is the straight line distance between the two points (want smaller distance)</li>
+<li>Rank (low to high): B, C, A</li>
+</ul></li>
+<li><strong>Dot Product</strong>:
+<ul>
+<li><span class="math inline">\(d(x,y) = x \cdot y\)</span></li>
+<li>It is the projection of one vector onto the other</li>
+<li>If vectors are normalized, it is the same as cosine similarity (want larger value)</li>
+<li>Rank (high to low): A, B, C</li>
+</ul></li>
+</ul>
+</section>
+<section id="content-based-filtering" class="level2">
+<h2 class="anchored" data-anchor-id="content-based-filtering">Content Based Filtering</h2>
+<ul>
+<li>Supervised learning</li>
+<li>Does not make use of <em>social network / information</em></li>
+<li>Solves the cold start problem (can recommend items to new users/items)</li>
+<li>Assumes that we have <strong>features of items and/or users</strong> to predict ratings</li>
+<li>Create a user profile for each user
+<ul>
+<li>Treat rating prediction as a regression problem</li>
+<li>Have a regression model for each user</li>
+</ul></li>
+</ul>
+<section id="steps-in-python-with-a-movie-recommendation-example" class="level3">
+<h3 class="anchored" data-anchor-id="steps-in-python-with-a-movie-recommendation-example">Steps in Python (With a movie recommendation example)</h3>
+<ol start="0" type="1">
+<li><p>Load <code>ratings_df</code> (contains <code>user_id</code>, <code>movie_id</code>, and <code>rating</code>)</p>
+<ul>
+<li>Also make the user and movie mappers.</li>
+</ul></li>
+<li><p><strong>Load movie features</strong>. This is a matrix of shape <code>(n_movies, n_features)</code></p>
+<ul>
+<li>Index of movie features is movie id/name</li>
+<li>Features can be genre, director, actors, etc.</li>
+</ul></li>
+</ol>
+<p><img src="../images/8_1.png" width="400"></p>
+<ol start="2" type="1">
+<li><p><strong>Build a user profile</strong>. For each user, we will get the ratings and the corresponding movie features.</p>
+<ul>
+<li>Results in a dictionary (key: user, value: numpy array of size <code>(n_ratings, n_genres)</code>)
+<ul>
+<li><code>n_ratings</code>: number of movies rated by the user</li>
+</ul></li>
+</ul></li>
+<li><p><strong>Supervised learning</strong>. Train a regression model for each user.</p>
+<ul>
+<li>We will use <code>Ridge</code> regression model for this example.</li>
+<li><code>X</code> is movie features (shape = <code>(n_movies, n_features)</code>)</li>
+<li><code>y</code> is the ratings (shape = <code>(n_movies, 1)</code>)</li>
+</ul></li>
+</ol>
+<ul>
+<li>Results in “known” weights for each feature for each user. <span class="math inline">\(W\)</span> of size <code>(n_features, 1)</code> for each user. <img src="../images/8_w_ex.png" width="200"></li>
+</ul>
+</section>
+</section>
+<section id="collaborative-vs-content-based-filtering" class="level2">
+<h2 class="anchored" data-anchor-id="collaborative-vs-content-based-filtering">Collaborative vs Content Based Filtering</h2>
+<table class="table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 49%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Collaborative Filtering</th>
+<th>Content Based Filtering</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\hat{y}_{ij} = w_j^T z_i\)</span></td>
+<td><span class="math inline">\(\hat{y}_{ij} = w_i^T x_{ij}\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(w_j^T\)</span>: “hidden” embedding for feature <span class="math inline">\(j\)</span> <br> <span class="math inline">\(z_i\)</span>: “hidden” embedding for user <span class="math inline">\(i\)</span></td>
+<td><span class="math inline">\(w_i\)</span>: feature vector for user <span class="math inline">\(i\)</span> <br> <span class="math inline">\(x_{ij}\)</span>: feature <span class="math inline">\(j\)</span> for user <span class="math inline">\(i\)</span></td>
+</tr>
+<tr class="odd">
+<td>(+) Makes use of social network / information</td>
+<td>(-) Does not make use of social network / information</td>
+</tr>
+<tr class="even">
+<td>(-) Cold start problem</td>
+<td>(+) Solves the cold start problem</td>
+</tr>
+<tr class="odd">
+<td>(+) No feature engineering required</td>
+<td>(-) Requires feature engineering</td>
+</tr>
+<tr class="even">
+<td>(-) Hard to interpret</td>
+<td>(+) Easy to interpret</td>
+</tr>
+<tr class="odd">
+<td>(-) Cannot capture unique user preferences</td>
+<td>(+) Can capture unique user preferences (since each model is unique)</td>
+</tr>
+<tr class="even">
+<td>(+) More diverse recommendations</td>
+<td>(-) Less diverse recommendations (hardly recommend an item outside the user’s profile)</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="beyond-error-rate-in-recommender-systems" class="level2">
+<h2 class="anchored" data-anchor-id="beyond-error-rate-in-recommender-systems">Beyond Error Rate in Recommender Systems</h2>
+<ul>
+<li>Best RMSE <span class="math inline">\(\neq\)</span> Best Recommender</li>
+<li>Need to consider simplicity, interpretatibility, code maintainability, etc.
+<ul>
+<li>The Netflix Prize: The winning solution was never implemented</li>
+</ul></li>
+<li>Other things to consider:
+<ul>
+<li>Diversity: If someone buys a tennis racket, they might not want to buy another tennis racket</li>
+<li>Freshness: New items (new items need to be recommended for it to be successful)</li>
+<li>Trust: Explain your recommendation to the user</li>
+<li>Persistence: If the same recommendation is made over and over again, it might not be a good recommendation</li>
+<li>Social influence: If a friend buys something, you might want to buy it too</li>
+</ul></li>
+<li>Also need to consider ethical implications
+<ul>
+<li>Filter bubbles</li>
+<li>Recommending harmful content</li>
+</ul></li>
+</ul>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

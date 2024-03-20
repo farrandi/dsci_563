@@ -143,7 +143,7 @@ digits_tsne = tsne.fit_transform(digits.data)
 
 $$KL(P||Q) = \sum_{i,j}p_{ij}\log\left(\frac{p_{ij}}{q_{ij}}\right)$$
 
-#### Hyperparamter: Perplexity
+#### Hyperparameter: Perplexity
 
 - Perplexity is a measure of effective number of neighbors to consider
 
