@@ -86,6 +86,11 @@ lgr.fit(X_train_embeddings, y_train)
   - `perplexity`: Number of nearest neighbors to consider
   - `learning_rate`: Step size for gradient descent
   - `n_iter`: Number of iterations
+- **Cons**:
+  - slow and does not scale well to large datasets
+  - random initialization can lead to different results
+  - sensitive to hyperparameters (perplexity)
+  - Need to re-run when new data is added
 
 #### Example with `scikit-learn`
 
@@ -110,10 +115,12 @@ digits_tsne = tsne.fit_transform(digits.data)
 
 #### High-level Algorithm
 
+- Idea: Preserve the similarity between points in high-dimensional space in the low-dimensional space
+
 **In high-dimensional space,**
 
 1. Compute pairwise similarity between points as probabilities
-2. Similarity b/w $x_i$ and $x_j$ is $p_{ij}$\
+2. Similarity b/w $x_i$ and $x_j$ is $p_{ij}$
    - $p_{ij}$ is calculated using Gaussian distribution, centered at $x_i$
      - It is the density of $x_j$ under the Gaussian centered at $x_i$
      - $p_{ij}$ high if $x_i$ and $x_j$ are close to each other (and low if far)
@@ -125,7 +132,8 @@ digits_tsne = tsne.fit_transform(digits.data)
 
 1. Randomly initialize points in low-dimensional space (e.g. PCA)
 2. Calculates a similar set of pairwise probabilities $q_{ij}$ in the low-dimensional space
-   - $q_{ij}$ is calculated using **t-distribution** (NOT Gaussian)
+   - $q_{ij}$ is calculated using **t-distribution** (NOT Gaussian) to mitigate crowding problem
+     - Makes sure points are not crowded together
    - t-distribution has heavier tails than Gaussian
      - Assigns a higher probability to points that are far apart
 
@@ -133,13 +141,13 @@ digits_tsne = tsne.fit_transform(digits.data)
 
 - Minimize the difference between $p_{ij}$ and $q_{ij}$ using gradient descent (use Kullback-Leibler divergence)
 
-$$ KL(P||Q) = \sum*{ij} p*{ij} \log \frac{p*{ij}}{q*{ij}} $$
+$$KL(P||Q) = \sum_{i,j}p_{ij}\log\left(\frac{p_{ij}}{q_{ij}}\right)$$
 
 #### Hyperparamter: Perplexity
 
 - Perplexity is a measure of effective number of neighbors to consider
 
-  - Low: consider fewer neighbors
-  - High: consider more neighbors
+  - Low: consider fewer neighbors, smaller variance
+  - High: consider more neighbors, larger variance
 
   <img src="images/6_perplexity.png" width="500">
